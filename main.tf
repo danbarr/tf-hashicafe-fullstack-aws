@@ -66,6 +66,10 @@ module "vpc" {
 
   enable_dns_hostnames = true
   enable_dns_support   = true
+  manage_default_security_group = true
+  create_flow_log_cloudwatch_iam_role = true
+  create_flow_log_cloudwatch_log_group = true
+  enable_flow_log = true
 
   create_database_subnet_group       = true
   create_database_subnet_route_table = true
