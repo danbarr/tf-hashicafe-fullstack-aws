@@ -8,9 +8,9 @@ data "hcp_packer_image" "base" {
 }
 
 resource "aws_instance" "bastion" {
+  #checkov:skip=CKV_AWS_126:Detailed monitoring not required on bastion
   ami                         = data.hcp_packer_image.base.cloud_image_id
   instance_type               = var.bastion_instance_type
-  associate_public_ip_address = true
   subnet_id                   = module.vpc.public_subnets[0]
   vpc_security_group_ids      = [module.bastion_sg.security_group_id]
   iam_instance_profile        = aws_iam_instance_profile.bastion.name
@@ -20,6 +20,14 @@ resource "aws_instance" "bastion" {
     iops                  = 3000
     throughput            = 125
     delete_on_termination = true
+    encrypted             = true
+  }
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_put_response_hop_limit = 1
+    http_tokens                 = "required"
+    instance_metadata_tags      = "disabled"
   }
 
   tags = {
@@ -46,7 +54,7 @@ module "bastion_sg" {
   description = "Security group for ${local.name} bastion instance."
   vpc_id      = module.vpc.vpc_id
 
-  ingress_cidr_blocks = ["0.0.0.0/0"]
+  ingress_cidr_blocks = [module.vpc.vpc_cidr_block]
   ingress_rules       = ["ssh-tcp"]
   egress_rules        = ["all-all"]
 }
@@ -76,17 +84,7 @@ resource "aws_iam_role" "bastion" {
 POLICY
 }
 
-moved {
-  from = module.bastion_instance.aws_iam_role.this[0]
-  to   = aws_iam_role.bastion
-}
-
 resource "aws_iam_instance_profile" "bastion" {
   name_prefix = "${local.name}-bastion-"
   role        = aws_iam_role.bastion.name
-}
-
-moved {
-  from = module.bastion_instance.aws_iam_instance_profile.this[0]
-  to   = aws_iam_instance_profile.bastion
 }
