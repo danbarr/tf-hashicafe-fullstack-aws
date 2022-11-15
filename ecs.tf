@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "nginx" {
     [
       {
         name : "nginx"
-        image : "nginx:alpine"
+        image : "nginx:latest"
         essential : true
         cpu : 256
         memory : 256
