@@ -101,11 +101,18 @@ resource "aws_lb_target_group" "ecs_frontend" {
 }
 
 resource "aws_lb" "ecs_frontend" {
+  #checkov:skip=CKV2_AWS_28:WAF not desired
   name               = "${local.name}-ecs-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [module.ecs_alb_sg.security_group_id]
   subnets            = module.vpc.public_subnets
+  drop_invalid_header_fields = true
+
+  access_logs {
+    enabled = true
+    bucket = aws_s3_bucket.logs.id
+  }
 
   tags = {
     "network.scope" = "public"
@@ -113,10 +120,59 @@ resource "aws_lb" "ecs_frontend" {
   }
 }
 
+resource "tls_private_key" "frontend" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "tls_self_signed_cert" "frontend" {
+  private_key_pem = tls_private_key.frontend.private_key_pem
+
+  subject {
+    common_name  = aws_lb.ecs_frontend.dns_name
+    organization = "HashiCafe, Inc"
+    country      = "US"
+    province     = "California"
+    locality     = "San Francisco"
+  }
+
+  dns_names = [aws_lb.ecs_frontend.dns_name]
+
+  validity_period_hours = 72
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "server_auth"
+  ]
+}
+
+resource "aws_acm_certificate" "frontend" {
+  private_key      = tls_private_key.frontend.private_key_pem
+  certificate_body = tls_self_signed_cert.frontend.cert_pem
+}
+
 resource "aws_lb_listener" "ecs_frontend" {
   load_balancer_arn = aws_lb.ecs_frontend.arn
   port              = "80"
   protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+resource "aws_lb_listener" "ecs_frontend_tls" {
+  load_balancer_arn = aws_lb.ecs_frontend.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  certificate_arn   = aws_acm_certificate.frontend.arn
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
 
   default_action {
     type             = "forward"
@@ -133,7 +189,7 @@ module "ecs_alb_sg" {
   vpc_id      = module.vpc.vpc_id
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
-  ingress_rules       = ["http-80-tcp"]
+  ingress_rules       = ["http-80-tcp", "https-443-tcp"]
   egress_rules        = ["all-all"]
 }
 

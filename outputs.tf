@@ -5,7 +5,7 @@ output "bastion_hostname" {
 
 output "frontend_url" {
   description = "URL of the frontend load balancer."
-  value       = "http://${aws_lb.ecs_frontend.dns_name}"
+  value       = "https://${aws_lb.ecs_frontend.dns_name}"
 }
 
 output "eks_endpoint" {
@@ -16,4 +16,9 @@ output "eks_endpoint" {
 output "asset_bucket_name" {
   description = "Name of the S3 bucket for app assets."
   value       = aws_s3_bucket.assets.bucket
+}
+
+output "log_bucket_name" {
+  description = "Name of the logging bucket."
+  value = aws_s3_bucket.logs.bucket
 }

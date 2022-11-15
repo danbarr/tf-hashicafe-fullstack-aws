@@ -12,6 +12,10 @@ terraform {
       source  = "hashicorp/hcp"
       version = "~> 0.35"
     }
+    tls = {
+      source = "hashicorp/tls"
+      version = "~> 4.0"
+    }
   }
 
   cloud {
