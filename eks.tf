@@ -10,11 +10,12 @@ resource "aws_eks_cluster" "backend" {
     subnet_ids              = concat(module.vpc.public_subnets, module.vpc.private_subnets)
     endpoint_public_access  = true
     endpoint_private_access = true
-    public_access_cidrs = [ "0.0.0.0/0" ]
+    public_access_cidrs     = ["0.0.0.0/0"]
   }
 
   tags = {
     "app.tier" = "backend"
+    yor_trace  = "615d62e5-b24e-442f-be0e-f85185d37dc0"
   }
 
   depends_on = [
@@ -40,6 +41,9 @@ resource "aws_iam_role" "eks" {
   ]
 }
 POLICY
+  tags = {
+    yor_trace = "62fed762-6963-4927-9275-e205f6ca2029"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
@@ -81,6 +85,7 @@ resource "aws_eks_node_group" "backend" {
 
   tags = {
     "app.tier" = "backend"
+    yor_trace  = "2cdef661-ab69-4b0e-b63c-ead2884a2734"
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
@@ -108,6 +113,9 @@ resource "aws_launch_template" "eks_nodes" {
         "network.scope" = "private"
     })
   }
+  tags = {
+    yor_trace = "961cbc84-98df-4e3b-a20e-59a23c8f68d7"
+  }
 }
 
 resource "aws_iam_role" "eks_node_group" {
@@ -123,6 +131,9 @@ resource "aws_iam_role" "eks_node_group" {
     }]
     Version = "2012-10-17"
   })
+  tags = {
+    yor_trace = "1494f158-3b6e-487e-bba5-c547e06231c1"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker" {
@@ -147,6 +158,9 @@ resource "aws_eks_addon" "cni" {
   lifecycle {
     replace_triggered_by = [aws_eks_cluster.backend.endpoint]
   }
+  tags = {
+    yor_trace = "17d0b1e5-f42a-46dc-9bfe-3d65b472424b"
+  }
 }
 
 resource "aws_eks_addon" "dns" {
@@ -156,6 +170,9 @@ resource "aws_eks_addon" "dns" {
   lifecycle {
     replace_triggered_by = [aws_eks_cluster.backend.endpoint]
   }
+  tags = {
+    yor_trace = "b559fd4d-ccf5-4a57-830c-8fb5bb8ba458"
+  }
 }
 
 resource "aws_eks_addon" "proxy" {
@@ -164,5 +181,8 @@ resource "aws_eks_addon" "proxy" {
   depends_on   = [aws_eks_node_group.backend]
   lifecycle {
     replace_triggered_by = [aws_eks_cluster.backend.endpoint]
+  }
+  tags = {
+    yor_trace = "e5980f99-9f24-4ed7-bd64-aebc2c006109"
   }
 }
