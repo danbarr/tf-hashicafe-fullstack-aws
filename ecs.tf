@@ -23,6 +23,13 @@ resource "aws_ecs_cluster_capacity_providers" "default" {
   }
 }
 
+data "hcp_packer_image" "nginx-image" {
+  bucket_name    = "docker-nginx"
+  channel        = "latest"
+  cloud_provider = "docker"
+  region         = "docker"
+}
+
 resource "aws_ecs_task_definition" "nginx" {
   family                   = "${local.name}-nginx"
   cpu                      = 1024
@@ -39,7 +46,7 @@ resource "aws_ecs_task_definition" "nginx" {
     [
       {
         name : "nginx"
-        image : "nginx:alpine"
+        image : data.hcp_packer_image.nginx-image.labels["ImageDigest"]
         essential : true
         cpu : 256
         memory : 256
@@ -102,16 +109,16 @@ resource "aws_lb_target_group" "ecs_frontend" {
 
 resource "aws_lb" "ecs_frontend" {
   #checkov:skip=CKV2_AWS_28:WAF not desired
-  name               = "${local.name}-ecs-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [module.ecs_alb_sg.security_group_id]
-  subnets            = module.vpc.public_subnets
+  name                       = "${local.name}-ecs-alb"
+  internal                   = false
+  load_balancer_type         = "application"
+  security_groups            = [module.ecs_alb_sg.security_group_id]
+  subnets                    = module.vpc.public_subnets
   drop_invalid_header_fields = true
 
   access_logs {
     enabled = true
-    bucket = aws_s3_bucket.logs.id
+    bucket  = aws_s3_bucket.logs.id
   }
 
   tags = {
