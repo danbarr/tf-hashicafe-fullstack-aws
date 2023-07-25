@@ -40,7 +40,7 @@ moved {
 
 module "bastion_sg" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 4.5"
+  version = "~> 5.1"
 
   name        = "${local.name}-bastion-sg"
   description = "Security group for ${local.name} bastion instance."
