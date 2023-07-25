@@ -6,7 +6,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.20"
+      version = "~> 5.9"
     }
     hcp = {
       source  = "hashicorp/hcp"
@@ -47,7 +47,7 @@ locals {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 3.18"
+  version = "~> 5.1"
 
   name = "${local.name}-vpc"
   cidr = "10.0.0.0/16"

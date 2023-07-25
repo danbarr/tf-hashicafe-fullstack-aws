@@ -126,7 +126,7 @@ resource "aws_lb_listener" "ecs_frontend" {
 
 module "ecs_alb_sg" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 4.5"
+  version = "~> 5.1"
 
   name        = "${local.name}-ecs-frontend-alb-sg"
   description = "Security group for ${local.name} ECS frontend ALB."
@@ -139,7 +139,7 @@ module "ecs_alb_sg" {
 
 module "ecs_nginx_sg" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 4.5"
+  version = "~> 5.1"
 
   name        = "${local.name}-ecs-nginx-sg"
   description = "Security group for ${local.name} ECS nginx containers."
