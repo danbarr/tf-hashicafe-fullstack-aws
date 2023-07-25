@@ -4,3 +4,8 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+    groups:
+      aws-dependencies:
+        patterns:
+          - "hashicorp/aws"
+          - "terraform-aws-modules/*"
