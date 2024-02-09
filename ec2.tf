@@ -1,19 +1,19 @@
 ## EC2 resources
 
-data "hcp_packer_image" "base" {
-  bucket_name    = var.bastion_packer_bucket
-  channel        = var.bastion_packer_channel
-  cloud_provider = "aws"
-  region         = var.region
+data "hcp_packer_artifact" "base" {
+  bucket_name  = var.bastion_packer_bucket
+  channel_name = var.bastion_packer_channel
+  platform     = "aws"
+  region       = var.region
 }
 
 resource "aws_instance" "bastion" {
   #checkov:skip=CKV_AWS_126:Detailed monitoring not required on bastion
-  ami                         = data.hcp_packer_image.base.cloud_image_id
-  instance_type               = var.bastion_instance_type
-  subnet_id                   = module.vpc.public_subnets[0]
-  vpc_security_group_ids      = [module.bastion_sg.security_group_id]
-  iam_instance_profile        = aws_iam_instance_profile.bastion.name
+  ami                    = data.hcp_packer_artifact.base.external_identifier
+  instance_type          = var.bastion_instance_type
+  subnet_id              = module.vpc.public_subnets[0]
+  vpc_security_group_ids = [module.bastion_sg.security_group_id]
+  iam_instance_profile   = aws_iam_instance_profile.bastion.name
 
   root_block_device {
     volume_type           = "gp3"

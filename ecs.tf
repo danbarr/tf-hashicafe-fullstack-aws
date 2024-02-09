@@ -23,11 +23,11 @@ resource "aws_ecs_cluster_capacity_providers" "default" {
   }
 }
 
-data "hcp_packer_image" "nginx-image" {
-  bucket_name    = "docker-nginx"
-  channel        = "latest"
-  cloud_provider = "docker"
-  region         = "docker"
+data "hcp_packer_artifact" "nginx-image" {
+  bucket_name  = "docker-nginx"
+  channel_name = var.bastion_packer_channel
+  platform     = "docker"
+  region       = "docker"
 }
 
 resource "aws_ecs_task_definition" "nginx" {
@@ -46,7 +46,7 @@ resource "aws_ecs_task_definition" "nginx" {
     [
       {
         name : "nginx"
-        image : data.hcp_packer_image.nginx-image.labels["ImageDigest"]
+        image : data.hcp_packer_artifact.nginx-image.labels["ImageDigest"]
         essential : true
         cpu : 256
         memory : 256

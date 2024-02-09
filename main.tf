@@ -10,10 +10,10 @@ terraform {
     }
     hcp = {
       source  = "hashicorp/hcp"
-      version = "~> 0.35"
+      version = "~> 0.82"
     }
     tls = {
-      source = "hashicorp/tls"
+      source  = "hashicorp/tls"
       version = "~> 4.0"
     }
   }
@@ -46,7 +46,7 @@ provider "hcp" {}
 data "aws_default_tags" "default" {}
 
 locals {
-  name  = "${var.prefix}-hashicafe-${var.env}"
+  name = "${var.prefix}-hashicafe-${var.env}"
 }
 
 module "vpc" {
@@ -64,12 +64,12 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
-  enable_dns_hostnames = true
-  enable_dns_support   = true
-  manage_default_security_group = true
-  create_flow_log_cloudwatch_iam_role = true
+  enable_dns_hostnames                 = true
+  enable_dns_support                   = true
+  manage_default_security_group        = true
+  create_flow_log_cloudwatch_iam_role  = true
   create_flow_log_cloudwatch_log_group = true
-  enable_flow_log = true
+  enable_flow_log                      = true
 
   create_database_subnet_group       = true
   create_database_subnet_route_table = true

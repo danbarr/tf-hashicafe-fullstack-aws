@@ -20,5 +20,5 @@ output "asset_bucket_name" {
 
 output "log_bucket_name" {
   description = "Name of the logging bucket."
-  value = aws_s3_bucket.logs.bucket
+  value       = aws_s3_bucket.logs.bucket
 }
