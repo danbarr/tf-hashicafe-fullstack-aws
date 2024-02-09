@@ -47,6 +47,7 @@ resource "aws_ecs_task_definition" "nginx" {
       {
         name : "nginx"
         image : data.hcp_packer_artifact.nginx-image.labels["ImageDigest"]
+        readOnlyRootFilesystem : true
         essential : true
         cpu : 256
         memory : 256

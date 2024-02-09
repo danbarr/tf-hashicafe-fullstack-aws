@@ -5,6 +5,7 @@ locals {
 resource "aws_eks_cluster" "backend" {
   name     = local.eks_cluster_name
   role_arn = aws_iam_role.eks.arn
+  version  = var.eks_version
 
   vpc_config {
     subnet_ids              = concat(module.vpc.public_subnets, module.vpc.private_subnets)
