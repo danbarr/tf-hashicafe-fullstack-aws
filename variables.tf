@@ -49,3 +49,9 @@ variable "eks_node_instance_type" {
   type        = string
   default     = "t3.medium"
 }
+
+variable "eks_version" {
+  description = "Kubernetes version for the EKS cluster."
+  type        = string
+  default     = "1.29"
+}

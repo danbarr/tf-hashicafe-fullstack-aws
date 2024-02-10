@@ -5,12 +5,12 @@ locals {
 resource "aws_eks_cluster" "backend" {
   name     = local.eks_cluster_name
   role_arn = aws_iam_role.eks.arn
+  version  = var.eks_version
 
   vpc_config {
     subnet_ids              = concat(module.vpc.public_subnets, module.vpc.private_subnets)
-    endpoint_public_access  = true
+    endpoint_public_access  = false
     endpoint_private_access = true
-    public_access_cidrs = [ "0.0.0.0/0" ]
   }
 
   tags = {
@@ -97,6 +97,25 @@ resource "aws_launch_template" "eks_nodes" {
 
   monitoring {
     enabled = true
+  }
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_put_response_hop_limit = 1
+    http_tokens                 = "required"
+    instance_metadata_tags      = "disabled"
+  }
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      volume_size           = 20
+      volume_type           = "gp3"
+      iops                  = 3000
+      throughput            = 125
+      encrypted             = true
+      delete_on_termination = true
+    }
   }
 
   tag_specifications {
