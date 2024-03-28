@@ -8,6 +8,7 @@ resource "aws_ecs_cluster" "frontend" {
 
   tags = {
     "app.tier" = "frontend"
+    yor_trace  = "e40887ab-12ca-45cc-92cb-53d2f906e9d1"
   }
 }
 
@@ -52,6 +53,9 @@ resource "aws_ecs_task_definition" "nginx" {
       }
     ]
   )
+  tags = {
+    yor_trace = "5cc6eb0c-2c1a-4191-8d89-db17404602a6"
+  }
 }
 
 resource "aws_ecs_service" "nginx" {
@@ -89,6 +93,7 @@ resource "aws_ecs_service" "nginx" {
   tags = {
     "network.scope" = "public"
     "app.tier"      = "frontent"
+    yor_trace       = "88c6ada5-dd87-41db-9ff1-bd98e9e3077b"
   }
 }
 
@@ -98,6 +103,9 @@ resource "aws_lb_target_group" "ecs_frontend" {
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = module.vpc.vpc_id
+  tags = {
+    yor_trace = "b5a07efe-eea0-4ddf-bf1f-b780dea020ed"
+  }
 }
 
 resource "aws_lb" "ecs_frontend" {
@@ -110,6 +118,7 @@ resource "aws_lb" "ecs_frontend" {
   tags = {
     "network.scope" = "public"
     "app.tier"      = "frontend"
+    yor_trace       = "a0f2b49e-bdbd-4d06-a9ed-12e1d0a1b73f"
   }
 }
 
@@ -172,6 +181,9 @@ data "aws_iam_policy_document" "ecs_assume_role" {
 resource "aws_iam_role" "ecs_task_execution" {
   name               = "${local.name}-ecsTaskExecutionRole"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
+  tags = {
+    yor_trace = "c269ee1a-bccb-405a-8c05-d96cb4d82599"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution" {
@@ -182,4 +194,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution" {
 resource "aws_iam_role" "ecs_task" {
   name               = "${local.name}-ecsTaskRole"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
+  tags = {
+    yor_trace = "95c7a446-846b-4087-bec8-194544dc11e8"
+  }
 }
