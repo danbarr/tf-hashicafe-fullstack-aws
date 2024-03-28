@@ -43,6 +43,7 @@ resource "aws_dynamodb_table" "products" {
 
   tags = {
     "app.tier" = "db"
+    yor_trace  = "93a5baa8-67f0-4820-97ef-2ef06b065555"
   }
 }
 
