@@ -10,7 +10,7 @@ resource "aws_eks_cluster" "backend" {
     subnet_ids              = concat(module.vpc.public_subnets, module.vpc.private_subnets)
     endpoint_public_access  = true
     endpoint_private_access = true
-    public_access_cidrs = [ "0.0.0.0/0" ]
+    public_access_cidrs     = ["0.0.0.0/0"]
   }
 
   tags = {
