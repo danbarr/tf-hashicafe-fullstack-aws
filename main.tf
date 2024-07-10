@@ -10,7 +10,7 @@ terraform {
     }
     hcp = {
       source  = "hashicorp/hcp"
-      version = ">= 0.60.0, < 0.84.0"
+      version = "~> 0.82"
     }
   }
 
@@ -42,7 +42,7 @@ provider "hcp" {}
 data "aws_default_tags" "default" {}
 
 locals {
-  name  = "${var.prefix}-hashicafe-${var.env}"
+  name = "${var.prefix}-hashicafe-${var.env}"
 }
 
 module "vpc" {

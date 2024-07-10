@@ -1,14 +1,14 @@
 ## EC2 resources
 
-data "hcp_packer_image" "base" {
-  bucket_name    = var.bastion_packer_bucket
-  channel        = var.bastion_packer_channel
-  cloud_provider = "aws"
-  region         = var.region
+data "hcp_packer_artifact" "base" {
+  bucket_name  = var.bastion_packer_bucket
+  channel_name = var.bastion_packer_channel
+  platform     = "aws"
+  region       = var.region
 }
 
 resource "aws_instance" "bastion" {
-  ami                         = data.hcp_packer_image.base.cloud_image_id
+  ami                         = data.hcp_packer_artifact.base.external_identifier
   instance_type               = var.bastion_instance_type
   associate_public_ip_address = true
   subnet_id                   = module.vpc.public_subnets[0]
