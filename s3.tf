@@ -3,6 +3,7 @@ resource "aws_s3_bucket" "assets" {
   force_destroy = true
   tags = {
     "app.tier" = "storage"
+    yor_trace  = "923aaa10-a45b-4d50-b644-b9a4ba663fe7"
   }
 }
 

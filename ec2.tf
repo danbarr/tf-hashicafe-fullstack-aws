@@ -26,6 +26,7 @@ resource "aws_instance" "bastion" {
     Name            = "${local.name}-bastion"
     "network.scope" = "public"
     "app.tier"      = "bastion"
+    yor_trace       = "f1f15d50-6649-4fbe-a5c9-7116daf5bc23"
   }
 
   volume_tags = {
@@ -74,6 +75,9 @@ resource "aws_iam_role" "bastion" {
   ]
 }
 POLICY
+  tags = {
+    yor_trace = "c710f579-5de5-4055-8e4f-7f3726d1d0c8"
+  }
 }
 
 moved {
@@ -84,6 +88,9 @@ moved {
 resource "aws_iam_instance_profile" "bastion" {
   name_prefix = "${local.name}-bastion-"
   role        = aws_iam_role.bastion.name
+  tags = {
+    yor_trace = "6d76df6d-706f-4844-942a-f1b52e792fb7"
+  }
 }
 
 moved {
